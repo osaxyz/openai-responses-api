@@ -1,43 +1,44 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { reactive } from "vue"
 import { ERROR_MESSAGE } from "./constants/error"
 
-const api_key = ref("")
-const endpoint = ref("https://api.openai.com/v1/responses")
-const request_body = ref(JSON.stringify({
-    model: "gpt-4o",
-    input: "Hello, world!"
-}, null, 4))
-const response_data = ref("")
-const is_loading = ref(false)
+const request = reactive({
+    api_key: "",
+    endpoint: "https://api.openai.com/v1/responses",
+    body: JSON.stringify({ model: "gpt-4o", input: "Hello, world!" }, null, 4),
+    is_loading: false,
+})
+
+const response = reactive({
+    data: "",
+})
 
 async function sendRequest() {
-    if (!api_key.value) {
-        response_data.value = JSON.stringify({ error: ERROR_MESSAGE.MISSING_API_KEY }, null, 4)
+    if (!request.api_key) {
+        response.data = JSON.stringify({ error: ERROR_MESSAGE.MISSING_API_KEY }, null, 4)
         return
     }
 
-    is_loading.value = true
-    response_data.value = ""
+    request.is_loading = true
+    response.data = ""
 
     try {
-        const response = await fetch(endpoint.value, {
+        const fetch_response = await fetch(request.endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${api_key.value}`
+                "Authorization": `Bearer ${request.api_key}`
             },
-            body: request_body.value
+            body: request.body
         })
 
-        const data = await response.json()
-        response_data.value = JSON.stringify(data, null, 4)
+        const data = await fetch_response.json()
+        response.data = JSON.stringify(data, null, 4)
     } catch (error) {
-        response_data.value = JSON.stringify({
-            error: error instanceof Error ? error.message : ERROR_MESSAGE.REQUEST_FAILED
-        }, null, 4)
+        const error_message = error instanceof Error ? error.message : String(error)
+        response.data = JSON.stringify({ error: error_message }, null, 4)
     } finally {
-        is_loading.value = false
+        request.is_loading = false
     }
 }
 </script>
@@ -56,7 +57,7 @@ async function sendRequest() {
                 <label class="field">
                     <span class="field-label">API Key</span>
                     <input
-                        v-model="api_key"
+                        v-model="request.api_key"
                         type="password"
                         placeholder="sk-..."
                         class="input"
@@ -66,7 +67,7 @@ async function sendRequest() {
                 <label class="field">
                     <span class="field-label">Endpoint</span>
                     <input
-                        v-model="endpoint"
+                        v-model="request.endpoint"
                         type="text"
                         class="input"
                     />
@@ -75,7 +76,7 @@ async function sendRequest() {
                 <label class="field">
                     <span class="field-label">Body (JSON)</span>
                     <textarea
-                        v-model="request_body"
+                        v-model="request.body"
                         class="textarea"
                         rows="12"
                     />
@@ -83,16 +84,17 @@ async function sendRequest() {
 
                 <button
                     class="send-button"
-                    :disabled="is_loading"
+                    :disabled="request.is_loading"
                     @click="sendRequest"
                 >
-                    {{ is_loading ? "送信中..." : "送信" }}
+                    {{ request.is_loading ? "送信中..." : "送信" }}
                 </button>
             </div>
 
             <div class="panel response-panel">
                 <h2>Response</h2>
-                <pre class="response-output">{{ response_data || "レスポンスがここに表示されます" }}</pre>
+                <pre v-if="response.data" class="response-output">{{ response.data }}</pre>
+                <pre v-else class="response-output placeholder">レスポンスがここに表示されます</pre>
             </div>
         </main>
     </div>
@@ -221,5 +223,9 @@ body {
     white-space: pre-wrap;
     word-break: break-word;
     min-height: 300px;
+}
+
+.response-output.placeholder {
+    color: #999;
 }
 </style>
