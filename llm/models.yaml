@@ -1,0 +1,6 @@
+# OpenAI Responses API Schema - Data Models
+# このファイルは全てのデータモデルを定義する
+
+version: "0.1.0"
+
+models: {}

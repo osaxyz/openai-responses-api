@@ -1,0 +1,35 @@
+{
+    "name": "openai-responses-api-schema",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "description": "OpenAI互換のエンドポイントを作成しやすくするための仕様群",
+    "workspaces": [
+        "apps/*",
+        "apis"
+    ],
+    "scripts": {
+        "dev": "concurrently -n web,try,docs -c blue,green,magenta \"npm run dev -w apps/web\" \"npm run dev -w apps/try\" \"npm run dev -w apps/docs\"",
+        "dev:web": "npm run dev -w apps/web",
+        "dev:try": "npm run dev -w apps/try",
+        "dev:docs": "npm run dev -w apps/docs",
+        "build:web": "npm run build -w apps/web",
+        "build:try": "npm run build -w apps/try",
+        "build:docs": "npm run build -w apps/docs",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "concurrently": "^9.2.1",
+        "eslint": "^9.0.0",
+        "eslint-config-prettier": "^10.0.0",
+        "eslint-plugin-vue": "^9.0.0",
+        "prettier": "^3.0.0",
+        "vue-eslint-parser": "^9.0.0"
+    }
+}
