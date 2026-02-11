@@ -10,5 +10,5 @@ hero:
           link: /guide/
         - theme: alt
           text: スキーマ参照
-          link: /guide/schema
+          link: /schema/
 ---
