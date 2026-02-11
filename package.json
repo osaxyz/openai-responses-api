@@ -9,15 +9,14 @@
         "apis"
     ],
     "scripts": {
-        "dev": "concurrently -n web,try,docs -c blue,green,magenta \"npm run dev -w apps/web\" \"npm run dev -w apps/try\" \"npm run dev -w apps/docs\"",
+        "dev": "concurrently -n web,docs -c blue,magenta \"npm run dev -w apps/web\" \"npm run dev -w apps/docs\"",
         "dev:web": "npm run dev -w apps/web",
-        "dev:try": "npm run dev -w apps/try",
         "dev:docs": "npm run dev -w apps/docs",
         "build:web": "npm run build -w apps/web",
-        "build:try": "npm run build -w apps/try",
         "build:docs": "npm run build -w apps/docs",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
+        "collect": "npm run collect -w apps/try",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },

@@ -40,6 +40,24 @@ export default [
         }
     },
     {
+        files: ["**/collector/**/*.ts"],
+        languageOptions: {
+            globals: {
+                process: "readonly",
+                console: "readonly",
+                performance: "readonly",
+                setTimeout: "readonly",
+                URL: "readonly",
+                Response: "readonly",
+                Request: "readonly",
+                RequestInfo: "readonly",
+                RequestInit: "readonly",
+                ReadableStream: "readonly",
+                TextDecoder: "readonly"
+            }
+        }
+    },
+    {
         files: ["**/*.vue"],
         languageOptions: {
             parser: vue_parser,

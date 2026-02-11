@@ -3,4 +3,146 @@
 
 version: "0.1.0"
 
-models: {}
+models:
+    OpenAIProvider:
+        description: "createOpenAIの戻り値型"
+        type: "ReturnType<typeof createOpenAI>"
+        source: "@ai-sdk/openai"
+
+    PatternCategory:
+        description: "収集パターンのカテゴリ"
+        type: "enum"
+        values:
+            - "text_generation"
+            - "streaming"
+            - "tool_calling"
+            - "vision"
+            - "structured_output"
+            - "web_search"
+            - "parameters"
+
+    PatternMethod:
+        description: "Vercel AI SDKのメソッド名"
+        type: "enum"
+        values:
+            - "generateText"
+            - "streamText"
+
+    CollectPattern:
+        description: "収集パターンの定義"
+        type: "object"
+        fields:
+            id:
+                type: "string"
+                description: "パターンID（category/name形式）"
+            description:
+                type: "string"
+                description: "パターンの説明"
+            category:
+                type: "PatternCategory"
+                description: "所属カテゴリ"
+            method:
+                type: "PatternMethod"
+                description: "使用するSDKメソッド"
+            model_id:
+                type: "string"
+                description: "使用するOpenAIモデルID"
+            execute:
+                type: "(provider: OpenAIProvider) => Promise<unknown>"
+                description: "パターン実行関数"
+
+    CollectResult:
+        description: "パターン実行結果"
+        type: "object"
+        fields:
+            pattern_id:
+                type: "string"
+                description: "実行したパターンID"
+            success:
+                type: "boolean"
+                description: "成功/失敗"
+            error_message:
+                type: "string | null"
+                description: "エラーメッセージ（成功時はnull）"
+            duration_ms:
+                type: "number"
+                description: "実行時間（ミリ秒）"
+
+    CapturedData:
+        description: "interceptorがキャプチャしたデータ"
+        type: "object"
+        fields:
+            request_body:
+                type: "Record<string, unknown> | null"
+                description: "リクエストボディ"
+            response_body:
+                type: "Record<string, unknown> | null"
+                description: "レスポンスボディ"
+            stream_chunks:
+                type: "string[]"
+                description: "ストリーミングチャンク"
+
+    InterceptorStore:
+        description: "fetch interceptorのストア"
+        type: "object"
+        fields:
+            captured:
+                type: "CapturedData"
+                description: "キャプチャされたデータ"
+            fetch:
+                type: "typeof globalThis.fetch"
+                description: "ラップされたfetch関数"
+            reset:
+                type: "() => void"
+                description: "キャプチャデータのリセット"
+
+    ProviderOptions:
+        description: "プロバイダ生成オプション"
+        type: "object"
+        fields:
+            fetch:
+                type: "typeof globalThis.fetch"
+                description: "カスタムfetch関数"
+
+    YamlOutputSchema:
+        description: "YAML出力のスキーマセクション"
+        type: "object"
+        fields:
+            id:
+                type: "string"
+                description: "パターンID"
+            description:
+                type: "string"
+                description: "パターンの説明"
+            category:
+                type: "string"
+                description: "カテゴリ"
+            method:
+                type: "string"
+                description: "SDKメソッド名"
+            model_id:
+                type: "string"
+                description: "モデルID"
+            collected_at:
+                type: "string"
+                description: "収集日時（ISO8601）"
+            sdk_version:
+                type: "string"
+                description: "AI SDKバージョン"
+            provider_version:
+                type: "string"
+                description: "@ai-sdk/openaiバージョン"
+
+    YamlOutput:
+        description: "YAML出力の全体構造"
+        type: "object"
+        fields:
+            schema:
+                type: "YamlOutputSchema"
+                description: "メタデータ"
+            request:
+                type: "object"
+                description: "OpenAIへの生リクエストボディ"
+            response:
+                type: "object"
+                description: "OpenAIからの生レスポンスボディ"
